@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FutureBlueprint — Lộ trình 3 năm</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════ */
+:root {
+  /* Dark palette */
+  --bg-deep:    #080c14;
+  --bg-base:    #0d1220;
+  --bg-raised:  #111827;
+  --bg-float:   #1a2235;
+  --bg-hover:   #1f2a40;
+
+  /* Borders */
+  --br-subtle:  rgba(255,255,255,.06);
+  --br-default: rgba(255,255,255,.10);
+  --br-strong:  rgba(255,255,255,.16);
+
+  /* Text */
+  --tx-1: #f0f4ff;
+  --tx-2: #a8b4cc;
+  --tx-3: #5c6b84;
+  --tx-inv: #080c14;
+
+  /* Accent gradient */
+  --grad-main:  linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #06b6d4 100%);
+  --grad-soft:  linear-gradient(135deg, rgba(99,102,241,.15) 0%, rgba(6,182,212,.10) 100%);
+  --grad-glow:  radial-gradient(ellipse at 50% 0%, rgba(139,92,246,.25) 0%, transparent 70%);
+
+  /* Status colors */
+  --c-year1:  #6366f1;  --c-year1-s: rgba(99,102,241,.12);
+  --c-year2:  #8b5cf6;  --c-year2-s: rgba(139,92,246,.12);
+  --c-year3:  #06b6d4;  --c-year3-s: rgba(6,182,212,.12);
+  --c-done:   #10b981;  --c-done-s:  rgba(16,185,129,.12);
+  --c-prog:   #f59e0b;  --c-prog-s:  rgba(245,158,11,.12);
+  --c-todo:   #5c6b84;  --c-todo-s:  rgba(92,107,132,.12);
+
+  /* Layout */
+  --sb-w: 252px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+
+  /* Shadows */
+  --sh-sm: 0 2px 8px rgba(0,0,0,.3);
+  --sh-md: 0 4px 20px rgba(0,0,0,.4);
+  --sh-lg: 0 12px 48px rgba(0,0,0,.5);
+  --sh-glow: 0 0 32px rgba(99,102,241,.2);
+}
+
+/* ══════════════════════════════════════════════
+   RESET & GLOBALS
+══════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  background: var(--bg-deep);
+  color: var(--tx-1);
+  min-height: 100vh;
+  display: flex;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+input,textarea,select,button { font-family: 'Cabinet Grotesk', sans-serif; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--bg-float); border-radius: 99px; }
+
+/* ══════════════════════════════════════════════
+   MESH BACKGROUND
+══════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 10%, rgba(99,102,241,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 10% 80%, rgba(6,182,212,.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ══════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════ */
+.sidebar {
+  width: var(--sb-w);
+  min-height: 100vh;
+  background: var(--bg-raised);
+  border-right: 1px solid var(--br-subtle);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 300;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+}
+
+/* Brand */
+.sb-brand {
+  padding: 22px 18px 18px;
+  border-bottom: 1px solid var(--br-subtle);
+  display: flex; align-items: center; gap: 10px;
+}
+.sb-logo {
+  width: 34px; height: 34px;
+  background: var(--grad-main);
+  border-radius: var(--r-sm);
+  display: flex; align-items:center; justify-content:center;
+  font-size: 15px;
+  box-shadow: var(--sh-glow);
+  flex-shrink: 0;
+}
+.sb-brand-text .name {
+  font-size: 14.5px; font-weight: 800;
+  color: var(--tx-1); letter-spacing:-.3px;
+}
+.sb-brand-text .tagline {
+  font-size: 10.5px; color: var(--tx-3); font-weight: 500;
+  margin-top: 1px;
+}
+
+/* User profile block */
+.sb-profile {
+  margin: 14px 12px;
+  padding: 12px 14px;
+  background: var(--bg-float);
+  border: 1px solid var(--br-subtle);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.sb-profile:hover { border-color: var(--br-default); background: var(--bg-hover); }
+.sb-profile-row { display:flex; align-items:center; gap:9px; }
+.sb-avatar {
+  width: 30px; height: 30px;
+  background: var(--grad-main);
+  border-radius: 50%;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 12px; font-weight: 800; flex-shrink:0;
+}
+.sb-profile-info .pname { font-size: 12.5px; font-weight: 700; color: var(--tx-1); }
+.sb-profile-info .prole { font-size: 10.5px; color: var(--tx-3); margin-top:1px; }
+
+/* Progress ring mini */
+.sb-progress-mini {
+  margin: 0 12px 4px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(99,102,241,.08) 0%, rgba(6,182,212,.06) 100%);
+  border: 1px solid rgba(99,102,241,.2);
+  border-radius: var(--r-md);
+}
+.spm-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing:.08em; color: var(--tx-3); margin-bottom: 7px; }
+.spm-bar { height: 4px; background: var(--bg-hover); border-radius: 99px; overflow: hidden; margin-bottom: 5px; }
+.spm-fill { height: 100%; background: var(--grad-main); border-radius: 99px; transition: width .8s cubic-bezier(.34,1.56,.64,1); }
+.spm-pct { font-size: 11px; font-weight: 700; color: var(--tx-2); }
+.spm-pct span { color: #8b5cf6; }
+
+/* Nav */
+.sb-nav { padding: 8px 12px; flex: 1; overflow-y: auto; }
+.sb-nav-section { margin-bottom: 20px; }
+.sb-nav-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--tx-3); padding: 0 6px; margin-bottom: 4px;
+}
+.sb-nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 500; color: var(--tx-2);
+  cursor: pointer; transition: all .15s;
+  border: none; background: none; width: 100%; text-align: left;
+  margin-bottom: 1px;
+}
+.sb-nav-item:hover { background: var(--bg-hover); color: var(--tx-1); }
+.sb-nav-item.active { background: rgba(99,102,241,.12); color: #818cf8; font-weight: 600; }
+.sb-nav-item .ni-icon { font-size: 15px; width: 20px; text-align:center; flex-shrink:0; opacity:.7; }
+.sb-nav-item.active .ni-icon { opacity: 1; }
+.sb-nav-item .ni-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px;
+}
+
+/* Year color pills in sidebar */
+.year-pill {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+.sb-footer {
+  padding: 12px 12px 18px;
+  border-top: 1px solid var(--br-subtle);
+}
+.sb-footer-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 10px; border-radius: var(--r-sm);
+  font-size: 12.5px; font-weight: 600; color: var(--tx-3);
+  cursor: pointer; transition: all .15s;
+  border: none; background: none; width: 100%;
+}
+.sb-footer-btn:hover { color: var(--tx-1); background: var(--bg-hover); }
+
+/* ══════════════════════════════════════════════
+   MAIN AREA
+══════════════════════════════════════════════ */
+.main {
+  margin-left: var(--sb-w);
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+  position: relative; z-index: 1;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  height: 56px;
+  background: rgba(13,18,32,.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--br-subtle);
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 0 28px;
+  position: sticky; top:0; z-index:200;
+}
+.tb-left { display:flex; align-items:center; gap:10px; }
+.tb-menu-btn {
+  display: none; background:none; border:1px solid var(--br-default);
+  border-radius:var(--r-sm); width:32px; height:32px;
+  cursor:pointer; color:var(--tx-2); font-size:15px;
+  align-items:center; justify-content:center;
+}
+.tb-title { font-size:15px; font-weight:800; letter-spacing:-.3px; }
+.tb-breadcrumb { font-size:12.5px; color:var(--tx-3); }
+.tb-breadcrumb span { color: var(--tx-2); }
+
+.tb-right { display:flex; align-items:center; gap:8px; }
+
+.btn-ai {
+  display: flex; align-items:center; gap:6px;
+  background: var(--grad-main);
+  color: #fff; border:none;
+  padding: 8px 16px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 700; cursor:pointer;
+  transition: opacity .15s, transform .1s;
+  letter-spacing: -.2px;
+  box-shadow: 0 4px 16px rgba(99,102,241,.35);
+}
+.btn-ai:hover { opacity:.88; }
+.btn-ai:active { transform: scale(.97); }
+.btn-ai .ai-spark { font-size:14px; }
+
+.btn-outline {
+  background: none; border: 1px solid var(--br-default);
+  color: var(--tx-2); padding: 7px 14px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600; cursor:pointer;
+  transition: all .15s;
+}
+.btn-outline:hover { border-color: var(--br-strong); color: var(--tx-1); background: var(--bg-hover); }
+
+/* ══════════════════════════════════════════════
+   CONTENT
+══════════════════════════════════════════════ */
+.content { padding: 28px 28px 48px; display:flex; flex-direction:column; gap:24px; }
+
+/* ── HERO BANNER ── */
+.hero {
+  background: var(--bg-raised);
+  border: 1px solid var(--br-subtle);
+  border-radius: var(--r-2xl);
+  padding: 32px 36px;
+  position: relative; overflow: hidden;
+  animation: fadeUp .5s ease both;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--grad-soft);
+  pointer-events: none;
+}
+.hero::after {
+  content: '🚀';
+  position: absolute;
+  right: 36px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 72px;
+  opacity: .06;
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items:center; gap:6px;
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  color: #818cf8; padding: 4px 12px; border-radius: 99px;
+  font-size: 11.5px; font-weight: 700; letter-spacing:.05em;
+  text-transform: uppercase; margin-bottom: 14px;
+}
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.15;
+  letter-spacing: -.4px;
+  margin-bottom: 10px;
+  max-width: 540px;
+}
+.hero h1 em { font-style:italic; background: var(--grad-main); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero-sub {
+  font-size: 14.5px; color: var(--tx-2); max-width: 480px;
+  line-height: 1.6; font-weight: 400;
+}
+
+/* Stat pills trong hero */
+.hero-stats {
+  display: flex; gap: 10px; flex-wrap:wrap;
+  margin-top: 22px;
+}
+.hstat {
+  display:flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--br-subtle);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  transition: border-color .2s, background .2s;
+}
+.hstat:hover { border-color: var(--br-default); background: var(--bg-float); }
+.hstat-icon { font-size: 18px; }
+.hstat-val { font-size: 18px; font-weight: 900; letter-spacing:-.4px; }
+.hstat-label { font-size: 11px; color: var(--tx-3); font-weight: 500; margin-top:1px; }
+
+/* ── STATS ROW ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.stat-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--br-subtle);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  animation: fadeUp .4s ease both;
+  position: relative; overflow: hidden;
+}
+.stat-card:hover { border-color: var(--br-default); transform: translateY(-2px); box-shadow: var(--sh-md); }
+.stat-card::before {
+  content: ''; position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,.02) 0%, transparent 100%);
+  pointer-events:none;
+}
+.sc-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.sc-label { font-size:11.5px; font-weight:700; color:var(--tx-3); text-transform:uppercase; letter-spacing:.07em; }
+.sc-icon {
+  width:30px; height:30px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.sc-value { font-size:24px; font-weight:900; letter-spacing:-.6px; margin-bottom:4px; }
+.sc-sub { font-size:12px; color:var(--tx-3); font-weight:500; }
+.sc-prog { margin-top:12px; height:3px; background:var(--br-subtle); border-radius:99px; overflow:hidden; }
+.sc-fill { height:100%; border-radius:99px; transition: width 1s cubic-bezier(.34,1.56,.64,1); }
+
+/* ── TWO COLUMN LAYOUT ── */
+.two-col { display:grid; grid-template-columns:1fr 340px; gap:16px; }
+.three-col { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+
+/* ── PANEL BASE ── */
+.panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--br-subtle);
+  border-radius: var(--r-xl);
+  overflow:hidden;
+  transition: box-shadow .2s, border-color .2s;
+}
+.panel:hover { box-shadow: var(--sh-sm); border-color: var(--br-default); }
+.panel-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--br-subtle);
+}
+.panel-title { font-size:14px; font-weight:800; letter-spacing:-.3px; }
+.panel-body { padding: 20px 22px; }
+.panel-body.no-pad { padding:0; }
+
+/* ── ROADMAP TABS ── */
+.roadmap-tabs {
+  display:flex; gap:4px;
+  padding: 4px;
+  background: var(--bg-deep);
+  border-radius: var(--r-sm);
+}
+.rtab {
+  padding: 5px 14px; border-radius: 6px;
+  font-size:12px; font-weight:700; cursor:pointer;
+  border:none; background:none;
+  color:var(--tx-3); transition: all .15s;
+}
+.rtab.active { background: var(--bg-float); color: var(--tx-1); }
+
+/* ── TIMELINE ITEMS ── */
+.timeline { display:flex; flex-direction:column; gap:0; }
+.tl-item {
+  display:flex; gap:14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--br-subtle);
+  position: relative;
+  cursor:pointer;
+  transition: background .15s;
+  border-radius: var(--r-sm);
+  padding-left: 8px; padding-right: 8px;
+  margin: 0 -8px;
+}
+.tl-item:last-child { border-bottom:none; }
+.tl-item:hover { background: var(--bg-hover); }
+
+.tl-left { display:flex; flex-direction:column; align-items:center; gap:0; flex-shrink:0; padding-top:2px; }
+.tl-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; flex-shrink:0; position:relative; z-index:1;
+}
+.tl-line {
+  width: 1px; flex:1; min-height:20px;
+  background: var(--br-subtle);
+  margin: 4px 0;
+}
+.tl-item:last-child .tl-line { display:none; }
+
+.tl-body { flex:1; min-width:0; }
+.tl-title-row { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:4px; }
+.tl-title { font-size:13.5px; font-weight:700; letter-spacing:-.2px; }
+.tl-quarter {
+  font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:99px;
+  white-space:nowrap; flex-shrink:0;
+}
+.tl-desc { font-size:12.5px; color:var(--tx-3); line-height:1.5; margin-bottom:8px; }
+.tl-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.tl-tag {
+  font-size:10.5px; font-weight:600; padding:2px 9px; border-radius:99px;
+  background: var(--bg-float); color: var(--tx-3);
+  border: 1px solid var(--br-subtle);
+}
+.tl-progress-mini { margin-top: 8px; }
+.tl-prog-bar { height:3px; background:var(--br-subtle); border-radius:99px; overflow:hidden; }
+.tl-prog-fill { height:100%; border-radius:99px; }
+
+/* Status badge */
+.status-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:700; padding:3px 9px; border-radius:99px;
+  text-transform:uppercase; letter-spacing:.06em;
+}
+.status-done  { background:var(--c-done-s);  color:var(--c-done); }
+.status-prog  { background:var(--c-prog-s);  color:var(--c-prog); }
+.status-todo  { background:var(--c-todo-s);  color:var(--c-todo); }
+
+/* ── GOALS CHECKLIST ── */
+.goals-list { display:flex; flex-direction:column; gap:6px; }
+.goal-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding: 10px 12px; border-radius:var(--r-md);
+  background: var(--bg-float);
+  border: 1px solid var(--br-subtle);
+  transition: all .15s; cursor:pointer;
+}
+.goal-item:hover { border-color:var(--br-default); background:var(--bg-hover); }
+.goal-item.done { opacity:.55; }
+.goal-cb {
+  width:18px; height:18px; border-radius:5px; flex-shrink:0; margin-top:1px;
+  border:1.5px solid var(--br-strong);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; transition: all .15s;
+}
+.goal-item.done .goal-cb { background: var(--c-done); border-color: var(--c-done); }
+.goal-text { font-size:13px; font-weight:500; color:var(--tx-2); line-height:1.4; }
+.goal-item.done .goal-text { text-decoration:line-through; color:var(--tx-3); }
+
+/* ── SKILLS CHART ── */
+.skills-list { display:flex; flex-direction:column; gap:12px; }
+.skill-row {}
+.skill-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.skill-name { font-size:13px; font-weight:600; color:var(--tx-2); display:flex; align-items:center; gap:6px; }
+.skill-pct { font-size:12px; font-weight:800; }
+.skill-bar { height:6px; background:var(--bg-float); border-radius:99px; overflow:hidden; border:1px solid var(--br-subtle); }
+.skill-fill { height:100%; border-radius:99px; transition: width 1.2s cubic-bezier(.34,1.56,.64,1); }
+
+/* ── MILESTONES MINI CALENDAR ── */
+.milestone-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.ms-item {
+  padding:12px 14px; border-radius:var(--r-md);
+  background:var(--bg-float); border:1px solid var(--br-subtle);
+  transition: all .15s; cursor:pointer;
+}
+.ms-item:hover { border-color:var(--br-default); background:var(--bg-hover); }
+.ms-date { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--tx-3); font-weight:500; margin-bottom:5px; }
+.ms-title { font-size:12.5px; font-weight:700; color:var(--tx-1); line-height:1.3; }
+.ms-dot { width:6px; height:6px; border-radius:50%; display:inline-block; margin-right:5px; }
+
+/* ══════════════════════════════════════════════
+   AI CHAT PANEL
+══════════════════════════════════════════════ */
+.ai-panel {
+  position: fixed;
+  right: 24px; bottom: 24px;
+  width: 380px;
+  background: var(--bg-raised);
+  border: 1px solid rgba(99,102,241,.3);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--sh-lg), 0 0 40px rgba(99,102,241,.12);
+  z-index: 500;
+  display: flex; flex-direction:column;
+  overflow: hidden;
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
+}
+.ai-panel.open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.ai-panel-head {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(99,102,241,.1) 0%, rgba(6,182,212,.06) 100%);
+  border-bottom: 1px solid rgba(99,102,241,.15);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.ai-head-left { display:flex; align-items:center; gap:10px; }
+.ai-avatar {
+  width:34px; height:34px; border-radius:var(--r-sm);
+  background: var(--grad-main);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; box-shadow: var(--sh-glow);
+}
+.ai-head-info .ai-name { font-size:14px; font-weight:800; letter-spacing:-.2px; }
+.ai-head-info .ai-status {
+  display:flex; align-items:center; gap:4px;
+  font-size:10.5px; color:var(--c-done); font-weight:600; margin-top:1px;
+}
+.ai-status-dot { width:5px; height:5px; border-radius:50%; background:var(--c-done); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.ai-close {
+  background:none; border:1px solid var(--br-default);
+  border-radius:var(--r-sm); width:28px; height:28px;
+  color:var(--tx-3); cursor:pointer; font-size:13px;
+  display:flex; align-items:center; justify-content:center;
+  transition: all .15s;
+}
+.ai-close:hover { background:var(--bg-hover); color:var(--tx-1); }
+
+/* Chat messages */
+.ai-messages {
+  flex:1; overflow-y:auto; padding:16px;
+  display:flex; flex-direction:column; gap:12px;
+  max-height: 340px;
+  min-height: 200px;
+}
+.msg { display:flex; gap:8px; align-items:flex-start; animation: msgIn .25s ease; }
+@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.msg.user { flex-direction:row-reverse; }
+.msg-av {
+  width:26px; height:26px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;
+}
+.msg.ai .msg-av { background: var(--grad-main); }
+.msg.user .msg-av { background: rgba(99,102,241,.2); color:#818cf8; }
+.msg-bubble {
+  max-width: 76%; padding: 10px 13px; border-radius: 14px;
+  font-size: 13px; line-height: 1.5; font-weight:400;
+}
+.msg.ai .msg-bubble {
+  background: var(--bg-float);
+  border: 1px solid var(--br-subtle);
+  color: var(--tx-1);
+  border-bottom-left-radius: 4px;
+}
+.msg.user .msg-bubble {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.msg-time { font-size:10px; color:var(--tx-3); margin-top:3px; text-align:right; }
+
+/* Typing indicator */
+.typing-indicator {
+  display:flex; gap:3px; align-items:center; padding:4px 0;
+}
+.typing-dot {
+  width:5px; height:5px; border-radius:50%;
+  background: #818cf8; opacity:.4;
+  animation: typingBounce 1.4s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay:.2s; }
+.typing-dot:nth-child(3) { animation-delay:.4s; }
+@keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-6px);opacity:1} }
+
+/* Suggestions */
+.ai-suggestions {
+  padding: 8px 16px;
+  display:flex; gap:6px; flex-wrap:wrap;
+  border-top: 1px solid var(--br-subtle);
+}
+.ai-suggestion-btn {
+  background: var(--bg-float); border: 1px solid var(--br-subtle);
+  color:var(--tx-2); padding:5px 11px; border-radius:99px;
+  font-size:11.5px; font-weight:600; cursor:pointer;
+  transition: all .15s;
+}
+.ai-suggestion-btn:hover { border-color:rgba(99,102,241,.4); color:#818cf8; background:rgba(99,102,241,.08); }
+
+/* Chat input */
+.ai-input-row {
+  padding: 12px 16px;
+  border-top: 1px solid var(--br-subtle);
+  display:flex; gap:8px; align-items:flex-end;
+}
+.ai-textarea {
+  flex:1; background:var(--bg-float); border:1px solid var(--br-default);
+  border-radius:var(--r-md); padding:9px 13px;
+  color:var(--tx-1); font-size:13px; font-weight:400;
+  resize:none; outline:none; min-height:38px; max-height:100px;
+  line-height:1.5;
+  transition: border-color .15s;
+  overflow-y:auto;
+}
+.ai-textarea:focus { border-color:rgba(99,102,241,.5); }
+.ai-textarea::placeholder { color:var(--tx-3); }
+.ai-send {
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--grad-main); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; transition: opacity .15s, transform .1s;
+  flex-shrink:0;
+  box-shadow: 0 4px 12px rgba(99,102,241,.3);
+}
+.ai-send:hover { opacity:.85; }
+.ai-send:active { transform:scale(.93); }
+
+/* FAB button */
+.ai-fab {
+  position:fixed; right:24px; bottom:24px;
+  width:52px; height:52px; border-radius:50%;
+  background:var(--grad-main);
+  border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; z-index:400;
+  box-shadow: 0 8px 24px rgba(99,102,241,.4);
+  transition: transform .2s, box-shadow .2s;
+}
+.ai-fab:hover { transform:scale(1.08); box-shadow:0 12px 32px rgba(99,102,241,.55); }
+.ai-fab.hidden { display:none; }
+
+/* ══════════════════════════════════════════════
+   EDIT MODAL
+══════════════════════════════════════════════ */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(6px);
+  z-index:600; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; animation:ovIn .2s ease; }
+@keyframes ovIn { from{opacity:0} to{opacity:1} }
+.modal {
+  background:var(--bg-raised); border:1px solid var(--br-default);
+  border-radius:var(--r-2xl); width:100%; max-width:500px;
+  box-shadow:var(--sh-lg);
+  animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;
+}
+@keyframes modalIn { from{opacity:0;transform:scale(.93)translateY(20px)} to{opacity:1;transform:scale(1)translateY(0)} }
+.modal-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 24px 16px; border-bottom:1px solid var(--br-subtle);
+}
+.modal-title { font-size:16px; font-weight:800; letter-spacing:-.3px; }
+.modal-close {
+  background:none; border:1px solid var(--br-default); border-radius:var(--r-sm);
+  width:30px; height:30px; cursor:pointer; color:var(--tx-3); font-size:14px;
+  display:flex; align-items:center; justify-content:center; transition:all .15s;
+}
+.modal-close:hover { background:var(--bg-hover); color:var(--tx-1); }
+.modal-body { padding:20px 24px 24px; }
+.f-group { margin-bottom:14px; }
+.f-label { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--tx-3); margin-bottom:5px; }
+.f-input {
+  width:100%; background:var(--bg-float); border:1.5px solid var(--br-default);
+  border-radius:var(--r-md); padding:9px 13px; font-size:13.5px; color:var(--tx-1);
+  outline:none; font-weight:500; transition:border-color .15s;
+}
+.f-input:focus { border-color:rgba(99,102,241,.5); }
+.f-input::placeholder { color:var(--tx-3); }
+.f-select { appearance:none; cursor:pointer; }
+.btn-save {
+  width:100%; background:var(--grad-main); color:#fff; border:none;
+  padding:12px; border-radius:var(--r-md); font-size:14px; font-weight:800;
+  cursor:pointer; margin-top:4px;
+  transition:opacity .15s, transform .1s;
+  box-shadow:0 4px 16px rgba(99,102,241,.3);
+}
+.btn-save:hover { opacity:.88; }
+.btn-save:active { transform:scale(.98); }
+
+/* ══════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════ */
+.toast {
+  position:fixed; bottom:90px; left:50%; z-index:9999;
+  transform:translateX(-50%) translateY(40px); opacity:0;
+  background:var(--bg-float); border:1px solid var(--br-default);
+  color:var(--tx-1); padding:10px 20px; border-radius:var(--r-md);
+  font-size:13px; font-weight:600;
+  box-shadow:var(--sh-md);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ══════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.stat-card:nth-child(1){animation-delay:.05s}
+.stat-card:nth-child(2){animation-delay:.10s}
+.stat-card:nth-child(3){animation-delay:.15s}
+.stat-card:nth-child(4){animation-delay:.20s}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media(max-width:1100px){
+  .two-col { grid-template-columns:1fr; }
+  .three-col { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:768px){
+  .sidebar { transform:translateX(-100%); width:260px; }
+  .sidebar.open { transform:translateX(0); }
+  .main { margin-left:0; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .three-col { grid-template-columns:1fr; }
+  .topbar { padding:0 16px; }
+  .content { padding:16px 16px 48px; gap:16px; }
+  .tb-menu-btn { display:flex; }
+  .ai-panel { width:calc(100vw - 32px); right:16px; bottom:16px; }
+  .ai-fab { right:16px; bottom:16px; }
+  .hero { padding:22px 20px; }
+  .hero::after { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">✦</div>
+    <div class="sb-brand-text">
+      <div class="name">FutureBlueprint</div>
+      <div class="tagline">Lộ trình 3 năm</div>
+    </div>
+  </div>
+
+  <!-- User -->
+  <div class="sb-profile" onclick="openEditProfile()">
+    <div class="sb-profile-row">
+      <div class="sb-avatar" id="sbAvatarText">N</div>
+      <div class="sb-profile-info">
+        <div class="pname" id="sbProfileName">Người dùng</div>
+        <div class="prole" id="sbProfileRole">Học sinh · Khóa 2024</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="sb-progress-mini">
+    <div class="spm-label">Tiến độ tổng thể</div>
+    <div class="spm-bar"><div class="spm-fill" id="sbProgFill" style="width:28%"></div></div>
+    <div class="spm-pct">Hoàn thành <span id="sbProgPct">28%</span> lộ trình</div>
+  </div>
+
+  <!-- Nav -->
+  <div class="sb-nav">
+    <div class="sb-nav-section">
+      <div class="sb-nav-label">Tổng quan</div>
+      <button class="sb-nav-item active" onclick="setPage('overview',this)">
+        <span class="ni-icon">🗺</span> Dashboard
+      </button>
+      <button class="sb-nav-item" onclick="setPage('goals',this)">
+        <span class="ni-icon">🎯</span> Mục tiêu
+        <span class="ni-badge" style="background:rgba(16,185,129,.15);color:#10b981" id="doneCount">0</span>
+      </button>
+      <button class="sb-nav-item" onclick="setPage('skills',this)">
+        <span class="ni-icon">⚡</span> Kỹ năng
+      </button>
+    </div>
+    <div class="sb-nav-section">
+      <div class="sb-nav-label">Lộ trình</div>
+      <button class="sb-nav-item" onclick="scrollToRoadmap()">
+        <span class="ni-icon">📅</span>
+        <span class="year-pill" style="background:#6366f1"></span> Năm 1 · 2024
+      </button>
+      <button class="sb-nav-item" onclick="scrollToRoadmap()">
+        <span class="ni-icon">📅</span>
+        <span class="year-pill" style="background:#8b5cf6"></span> Năm 2 · 2025
+      </button>
+      <button class="sb-nav-item" onclick="scrollToRoadmap()">
+        <span class="ni-icon">📅</span>
+        <span class="year-pill" style="background:#06b6d4"></span> Năm 3 · 2026
+      </button>
+    </div>
+    <div class="sb-nav-section">
+      <div class="sb-nav-label">Công cụ</div>
+      <button class="sb-nav-item" onclick="openAI()">
+        <span class="ni-icon">🤖</span> AI Tư vấn
+        <span class="ni-badge" style="background:rgba(99,102,241,.15);color:#818cf8">Beta</span>
+      </button>
+      <button class="sb-nav-item" onclick="openAddGoal()">
+        <span class="ni-icon">＋</span> Thêm mục tiêu
+      </button>
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <button class="sb-footer-btn" onclick="resetData()">🔄 Reset dữ liệu mẫu</button>
+  </div>
+</aside>
+
+<!-- ═══════ MAIN ═══════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <button class="tb-menu-btn" id="menuBtn" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="tb-title">Lộ trình tương lai</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <button class="btn-outline" onclick="openAddGoal()">+ Thêm mục tiêu</button>
+      <button class="btn-ai" onclick="openAI()">
+        <span class="ai-spark">✦</span> AI Coach
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content" id="mainContent">
+
+    <!-- HERO -->
+    <div class="hero" id="heroSection">
+      <div class="hero-eyebrow">✦ Blueprint đang hoạt động</div>
+      <h1>Xây dựng <em>tương lai</em><br>theo từng bước nhỏ</h1>
+      <p class="hero-sub">Lộ trình 3 năm cá nhân hoá — từ học sinh đến phiên bản tốt nhất của bạn. Theo dõi tiến độ, điều chỉnh mục tiêu và nhận tư vấn từ AI Coach.</p>
+      <div class="hero-stats" id="heroStats">
+        <!-- Render by JS -->
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="statsGrid">
+      <!-- JS render -->
+    </div>
+
+    <!-- ROADMAP + GOALS -->
+    <div class="two-col" id="roadmapSection">
+      <!-- Timeline -->
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">🗺 Lộ trình chi tiết</span>
+          <div class="roadmap-tabs">
+            <button class="rtab active" onclick="filterRoadmap('all',this)">Tất cả</button>
+            <button class="rtab" onclick="filterRoadmap('1',this)" style="color:#818cf8">Y1</button>
+            <button class="rtab" onclick="filterRoadmap('2',this)" style="color:#a78bfa">Y2</button>
+            <button class="rtab" onclick="filterRoadmap('3',this)" style="color:#22d3ee">Y3</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="timeline" id="timeline"><!-- JS --></div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <!-- Goals -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">🎯 Mục tiêu tháng này</span>
+            <button class="btn-outline" style="font-size:11px;padding:4px 10px" onclick="openAddGoal()">+ Thêm</button>
+          </div>
+          <div class="panel-body">
+            <div class="goals-list" id="goalsList"><!-- JS --></div>
+          </div>
+        </div>
+
+        <!-- Milestones -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">📌 Cột mốc quan trọng</span>
+          </div>
+          <div class="panel-body">
+            <div class="milestone-grid" id="milestoneGrid"><!-- JS --></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="three-col">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">⚡ Kỹ năng đang phát triển</span></div>
+        <div class="panel-body">
+          <div class="skills-list" id="skillsList"><!-- JS --></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">📚 Học tập & Đọc sách</span></div>
+        <div class="panel-body">
+          <div class="goals-list" id="studyList"><!-- JS --></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">💡 Ghi chú & Cảm hứng</span></div>
+        <div class="panel-body" id="notesPanel"><!-- JS --></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════ AI PANEL ═══════ -->
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-head">
+    <div class="ai-head-left">
+      <div class="ai-avatar">✦</div>
+      <div class="ai-head-info">
+        <div class="ai-name">AI Coach</div>
+        <div class="ai-status">
+          <span class="ai-status-dot"></span> Sẵn sàng tư vấn
+        </div>
+      </div>
+    </div>
+    <button class="ai-close" onclick="closeAI()">✕</button>
+  </div>
+
+  <div class="ai-messages" id="aiMessages"><!-- JS --></div>
+
+  <div class="ai-suggestions" id="aiSuggestions">
+    <button class="ai-suggestion-btn" onclick="sendSuggestion('Tư vấn lộ trình phù hợp cho tôi')">🗺 Tư vấn lộ trình</button>
+    <button class="ai-suggestion-btn" onclick="sendSuggestion('Làm sao để duy trì động lực học tập?')">💪 Duy trì động lực</button>
+    <button class="ai-suggestion-btn" onclick="sendSuggestion('Kỹ năng nào quan trọng nhất cần học?')">⚡ Kỹ năng cần học</button>
+  </div>
+
+  <div class="ai-input-row">
+    <textarea class="ai-textarea" id="aiInput" placeholder="Hỏi AI Coach về lộ trình của bạn…" rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button class="ai-send" onclick="sendAI()">↑</button>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="ai-fab" id="aiFab" onclick="openAI()" title="AI Coach">✦</button>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleModalOv(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle">Thêm mục tiêu</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"><!-- JS --></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════ JAVASCRIPT ═══════ -->
+<script>
+/* ═══════════════════════════════════════
+   DATA
+═══════════════════════════════════════ */
+const STORAGE = 'futureblueprint_v1';
+
+const DEFAULT_DATA = {
+  profile: {
+    name: 'Nguyễn Văn A',
+    role: 'Học sinh · Khóa 2024',
+    dream: 'Kỹ sư phần mềm tại công ty công nghệ hàng đầu'
+  },
+  roadmap: [
+    {
+      id:1, year:1, quarter:'Q1 2024', title:'Nền tảng học thuật',
+      desc:'Ổn định học lực, xây dựng thói quen học tập khoa học, lập kế hoạch tương lai.',
+      tags:['Học thuật','Thói quen','Kế hoạch'],
+      status:'done', progress:100,
+      color:'#6366f1'
+    },
+    {
+      id:2, year:1, quarter:'Q2–Q3 2024', title:'Khám phá định hướng nghề nghiệp',
+      desc:'Tìm hiểu các lĩnh vực hấp dẫn, tham gia câu lạc bộ, thử nghiệm dự án nhỏ.',
+      tags:['Nghề nghiệp','CLB','Dự án'],
+      status:'done', progress:100,
+      color:'#6366f1'
+    },
+    {
+      id:3, year:1, quarter:'Q4 2024', title:'Bắt đầu học kỹ năng số',
+      desc:'HTML/CSS cơ bản, tư duy logic, tiếng Anh giao tiếp B1.',
+      tags:['Lập trình','Tiếng Anh','Logic'],
+      status:'prog', progress:65,
+      color:'#6366f1'
+    },
+    {
+      id:4, year:2, quarter:'Q1–Q2 2025', title:'Đào sâu chuyên môn lập trình',
+      desc:'JavaScript, Python cơ bản, xây dựng portfolio 3 dự án thực tế.',
+      tags:['JavaScript','Python','Portfolio'],
+      status:'prog', progress:30,
+      color:'#8b5cf6'
+    },
+    {
+      id:5, year:2, quarter:'Q3 2025', title:'Thực tập / Dự án thực tế',
+      desc:'Tìm kiếm internship hoặc freelance, tham gia hackathon, mở rộng network.',
+      tags:['Internship','Hackathon','Network'],
+      status:'todo', progress:0,
+      color:'#8b5cf6'
+    },
+    {
+      id:6, year:2, quarter:'Q4 2025', title:'IELTS 6.5 & Chứng chỉ quốc tế',
+      desc:'Đạt IELTS 6.5, lấy chứng chỉ AWS Cloud hoặc Google UX Design.',
+      tags:['IELTS','AWS','Chứng chỉ'],
+      status:'todo', progress:0,
+      color:'#8b5cf6'
+    },
+    {
+      id:7, year:3, quarter:'Q1–Q2 2026', title:'Xây dựng thương hiệu cá nhân',
+      desc:'GitHub hoạt động, LinkedIn chuyên nghiệp, blog kỹ thuật, public speaking.',
+      tags:['Personal Brand','GitHub','Blog'],
+      status:'todo', progress:0,
+      color:'#06b6d4'
+    },
+    {
+      id:8, year:3, quarter:'Q3–Q4 2026', title:'Chuẩn bị bước vào thế giới chuyên nghiệp',
+      desc:'Nộp đơn vào đại học top hoặc job offer từ công ty mơ ước. Sẵn sàng 100%.',
+      tags:['Đại học','Job Offer','Tương lai'],
+      status:'todo', progress:0,
+      color:'#06b6d4'
+    }
+  ],
+  goals: [
+    { id:1, text:'Hoàn thành khóa JavaScript trên Udemy', done:true },
+    { id:2, text:'Đọc xong "Atomic Habits" và áp dụng 1 thói quen', done:true },
+    { id:3, text:'Xây dựng dự án web đầu tiên lên GitHub', done:false },
+    { id:4, text:'Luyện tiếng Anh 30 phút mỗi ngày trong 30 ngày', done:false },
+    { id:5, text:'Tham gia ít nhất 1 hackathon online', done:false },
+  ],
+  skills: [
+    { name:'HTML / CSS', icon:'🌐', level:75, color:'#f97316' },
+    { name:'JavaScript', icon:'⚡', level:45, color:'#eab308' },
+    { name:'Tiếng Anh', icon:'🗣', level:60, color:'#3b82f6' },
+    { name:'Python', icon:'🐍', level:30, color:'#10b981' },
+    { name:'Tư duy hệ thống', icon:'🧠', level:55, color:'#8b5cf6' },
+    { name:'Giao tiếp & Thuyết trình', icon:'🎤', level:50, color:'#ec4899' },
+  ],
+  studyList: [
+    { id:1, text:'"Atomic Habits" — James Clear', done:true },
+    { id:2, text:'"Deep Work" — Cal Newport', done:false },
+    { id:3, text:'CS50 — Harvard (edX)', done:false },
+    { id:4, text:'"The Lean Startup"', done:false },
+  ],
+  milestones: [
+    { date:'Tháng 3/2024', title:'Đạt HSG cấp trường môn Tin học', color:'#6366f1' },
+    { date:'Tháng 6/2024', title:'Ra mắt website đầu tiên', color:'#6366f1' },
+    { date:'Tháng 1/2025', title:'Nhận offer thực tập đầu tiên', color:'#8b5cf6' },
+    { date:'Tháng 9/2025', title:'Đạt IELTS 6.5', color:'#8b5cf6' },
+    { date:'Tháng 3/2026', title:'1000 GitHub contributions', color:'#06b6d4' },
+    { date:'Tháng 9/2026', title:'Nhận offer công ty mơ ước', color:'#06b6d4' },
+  ],
+  notes: [
+    '"Đừng tối ưu từng ngày — tối ưu hệ thống." — James Clear',
+    '"Người giỏi không hiếm khi thất bại, họ chỉ nhanh hơn trong việc học từ thất bại."',
+    'Mục tiêu 10 năm → Chia nhỏ thành mục tiêu 3 năm → Từng tháng → Từng ngày.',
+  ]
+};
+
+let data = {};
+let currentFilter = 'all';
+
+/* ═══════════════════════════════════════
+   STORAGE
+═══════════════════════════════════════ */
+function loadData() {
+  try {
+    const r = localStorage.getItem(STORAGE);
+    data = r ? JSON.parse(r) : JSON.parse(JSON.stringify(DEFAULT_DATA));
+    if (!r) saveData();
+  } catch { data = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+}
+function saveData() { localStorage.setItem(STORAGE, JSON.stringify(data)); }
+function resetData() {
+  if (confirm('Reset về dữ liệu mẫu?')) {
+    data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    saveData(); renderAll(); toast('✅ Đã reset dữ liệu');
+  }
+}
+
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+function getStats() {
+  const total = data.roadmap.length;
+  const done  = data.roadmap.filter(r => r.status === 'done').length;
+  const prog  = data.roadmap.filter(r => r.status === 'prog').length;
+  const avg   = Math.round(data.roadmap.reduce((s,r)=>s+r.progress,0)/total);
+  return { total, done, prog, avg };
+}
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+/* ═══════════════════════════════════════
+   RENDER HERO
+═══════════════════════════════════════ */
+function renderHero() {
+  const stats = getStats();
+  document.getElementById('heroStats').innerHTML = [
+    { icon:'📅', val:'3 Năm', label:'Lộ trình' },
+    { icon:'✅', val:`${stats.done}/${stats.total}`, label:'Giai đoạn xong' },
+    { icon:'🔥', val:`${stats.avg}%`, label:'Tiến độ TB' },
+    { icon:'🎯', val:`${data.goals.filter(g=>!g.done).length}`, label:'Mục tiêu đang dở' },
+  ].map(s=>`
+    <div class="hstat">
+      <span class="hstat-icon">${s.icon}</span>
+      <div>
+        <div class="hstat-val">${s.val}</div>
+        <div class="hstat-label">${s.label}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════
+   RENDER STATS CARDS
+═══════════════════════════════════════ */
+function renderStats() {
+  const st = getStats();
+  const done = data.goals.filter(g=>g.done).length;
+  const cards = [
+    {
+      label:'Tiến độ tổng thể', val:`${st.avg}%`,
+      sub:'Trên toàn bộ lộ trình', icon:'📊',
+      iconBg:'rgba(99,102,241,.12)', valColor:'#818cf8',
+      prog:st.avg, progColor:'linear-gradient(90deg,#6366f1,#8b5cf6)'
+    },
+    {
+      label:'Giai đoạn hoàn thành', val:`${st.done}`,
+      sub:`Trên ${st.total} giai đoạn`, icon:'✅',
+      iconBg:'rgba(16,185,129,.12)', valColor:'#10b981',
+      prog:Math.round(st.done/st.total*100), progColor:'#10b981'
+    },
+    {
+      label:'Đang thực hiện', val:`${st.prog}`,
+      sub:'Giai đoạn đang chạy', icon:'⚡',
+      iconBg:'rgba(245,158,11,.12)', valColor:'#f59e0b',
+      prog:Math.round(st.prog/st.total*100), progColor:'#f59e0b'
+    },
+    {
+      label:'Mục tiêu tháng', val:`${done}/${data.goals.length}`,
+      sub:'Đã hoàn thành', icon:'🎯',
+      iconBg:'rgba(6,182,212,.12)', valColor:'#22d3ee',
+      prog:Math.round(done/data.goals.length*100), progColor:'#06b6d4'
+    },
+  ];
+  document.getElementById('statsGrid').innerHTML = cards.map(c=>`
+    <div class="stat-card" style="animation:fadeUp .4s ease both">
+      <div class="sc-header">
+        <div class="sc-label">${c.label}</div>
+        <div class="sc-icon" style="background:${c.iconBg}">${c.icon}</div>
+      </div>
+      <div class="sc-value" style="color:${c.valColor}">${c.val}</div>
+      <div class="sc-sub">${c.sub}</div>
+      <div class="sc-prog"><div class="sc-fill" style="width:${c.prog}%;background:${c.progColor}"></div></div>
+    </div>
+  `).join('');
+
+  // Update sidebar progress
+  const avg = getStats().avg;
+  document.getElementById('sbProgFill').style.width = avg + '%';
+  document.getElementById('sbProgPct').textContent = avg + '%';
+  document.getElementById('sbProfileName').textContent = data.profile.name;
+  document.getElementById('sbProfileRole').textContent = data.profile.role;
+  document.getElementById('sbAvatarText').textContent = data.profile.name.charAt(0).toUpperCase();
+  document.getElementById('doneCount').textContent = data.goals.filter(g=>g.done).length;
+}
+
+/* ═══════════════════════════════════════
+   RENDER TIMELINE
+═══════════════════════════════════════ */
+function renderTimeline() {
+  let items = data.roadmap;
+  if (currentFilter !== 'all') items = items.filter(r=>r.year===parseInt(currentFilter));
+
+  const statusLabel = { done:'Hoàn thành', prog:'Đang làm', todo:'Sắp tới' };
+  const statusClass = { done:'status-done', prog:'status-prog', todo:'status-todo' };
+  const statusIcon  = { done:'✓', prog:'◐', todo:'○' };
+
+  document.getElementById('timeline').innerHTML = items.map(r=>`
+    <div class="tl-item" onclick="openEditRoadmap(${r.id})">
+      <div class="tl-left">
+        <div class="tl-dot" style="background:${r.color}22;color:${r.color};border:1.5px solid ${r.color}44">
+          ${statusIcon[r.status]}
+        </div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="tl-body">
+        <div class="tl-title-row">
+          <div class="tl-title">${r.title}</div>
+          <span class="tl-quarter" style="background:${r.color}15;color:${r.color}">${r.quarter}</span>
+        </div>
+        <div class="tl-desc">${r.desc}</div>
+        <div class="tl-tags">${r.tags.map(t=>`<span class="tl-tag">${t}</span>`).join('')}</div>
+        ${r.progress > 0 ? `
+          <div class="tl-progress-mini" style="margin-top:10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span class="status-badge ${statusClass[r.status]}">${statusLabel[r.status]}</span>
+              <span style="font-size:11px;font-weight:700;color:${r.color}">${r.progress}%</span>
+            </div>
+            <div class="tl-prog-bar"><div class="tl-prog-fill" style="width:${r.progress}%;background:${r.color}"></div></div>
+          </div>
+        ` : `<div style="margin-top:8px"><span class="status-badge ${statusClass[r.status]}">${statusLabel[r.status]}</span></div>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterRoadmap(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTimeline();
+}
+
+/* ═══════════════════════════════════════
+   RENDER GOALS
+═══════════════════════════════════════ */
+function renderGoals() {
+  document.getElementById('goalsList').innerHTML = data.goals.map(g=>`
+    <div class="goal-item ${g.done?'done':''}" onclick="toggleGoal(${g.id})">
+      <div class="goal-cb">${g.done?'✓':''}</div>
+      <div class="goal-text">${g.text}</div>
+    </div>
+  `).join('');
+}
+function toggleGoal(id) {
+  const g = data.goals.find(g=>g.id===id);
+  if (g) { g.done=!g.done; saveData(); renderGoals(); renderStats(); renderHero(); }
+}
+
+/* ═══════════════════════════════════════
+   RENDER SKILLS
+═══════════════════════════════════════ */
+function renderSkills() {
+  document.getElementById('skillsList').innerHTML = data.skills.map(s=>`
+    <div class="skill-row">
+      <div class="skill-header">
+        <span class="skill-name">${s.icon} ${s.name}</span>
+        <span class="skill-pct" style="color:${s.color}">${s.level}%</span>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-fill" style="width:${s.level}%;background:${s.color}"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════
+   RENDER STUDY LIST
+═══════════════════════════════════════ */
+function renderStudyList() {
+  document.getElementById('studyList').innerHTML = data.studyList.map(s=>`
+    <div class="goal-item ${s.done?'done':''}" onclick="toggleStudy(${s.id})">
+      <div class="goal-cb">${s.done?'✓':''}</div>
+      <div class="goal-text">${s.text}</div>
+    </div>
+  `).join('');
+}
+function toggleStudy(id) {
+  const s = data.studyList.find(s=>s.id===id);
+  if(s){ s.done=!s.done; saveData(); renderStudyList(); }
+}
+
+/* ═══════════════════════════════════════
+   RENDER MILESTONES
+═══════════════════════════════════════ */
+function renderMilestones() {
+  document.getElementById('milestoneGrid').innerHTML = data.milestones.map(m=>`
+    <div class="ms-item">
+      <div class="ms-date"><span class="ms-dot" style="background:${m.color}"></span>${m.date}</div>
+      <div class="ms-title">${m.title}</div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════
+   RENDER NOTES
+═══════════════════════════════════════ */
+function renderNotes() {
+  document.getElementById('notesPanel').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${data.notes.map((n,i)=>`
+        <div style="padding:12px 14px;background:var(--bg-float);border:1px solid var(--br-subtle);border-radius:var(--r-md);border-left:3px solid ${['#6366f1','#8b5cf6','#06b6d4'][i%3]}">
+          <p style="font-size:12.5px;color:var(--tx-2);line-height:1.55;font-style:italic">${n}</p>
+        </div>
+      `).join('')}
+      <button onclick="openAddNote()" style="background:none;border:1px dashed var(--br-default);color:var(--tx-3);padding:10px;border-radius:var(--r-md);font-size:12.5px;cursor:pointer;transition:all .15s;font-family:inherit"
+        onmouseover="this.style.borderColor='var(--br-strong)';this.style.color='var(--tx-2)'"
+        onmouseout="this.style.borderColor='var(--br-default)';this.style.color='var(--tx-3)'">
+        + Thêm ghi chú
+      </button>
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════
+   RENDER ALL
+═══════════════════════════════════════ */
+function renderAll() {
+  renderHero();
+  renderStats();
+  renderTimeline();
+  renderGoals();
+  renderSkills();
+  renderStudyList();
+  renderMilestones();
+  renderNotes();
+}
+
+/* ═══════════════════════════════════════
+   MODAL SYSTEM
+═══════════════════════════════════════ */
+function openModal(title, bodyHTML) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHTML;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function handleModalOv(e) { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+
+/* ADD GOAL */
+function openAddGoal() {
+  openModal('Thêm mục tiêu mới', `
+    <div class="f-group">
+      <label class="f-label">Mô tả mục tiêu</label>
+      <input type="text" class="f-input" id="newGoalText" placeholder="VD: Hoàn thành khóa học JavaScript..."/>
+    </div>
+    <button class="btn-save" onclick="saveGoal()">Lưu mục tiêu</button>
+  `);
+  setTimeout(()=>document.getElementById('newGoalText')?.focus(), 200);
+}
+function saveGoal() {
+  const text = document.getElementById('newGoalText')?.value?.trim();
+  if (!text) { toast('⚠️ Nhập mô tả mục tiêu'); return; }
+  data.goals.push({ id: Date.now(), text, done: false });
+  saveData(); closeModal(); renderGoals(); renderStats(); renderHero();
+  toast('✅ Đã thêm mục tiêu!');
+}
+
+/* ADD NOTE */
+function openAddNote() {
+  openModal('Thêm ghi chú / Cảm hứng', `
+    <div class="f-group">
+      <label class="f-label">Nội dung ghi chú</label>
+      <textarea class="f-input" id="newNoteText" rows="3" placeholder="Câu trích dẫn, ý tưởng, động lực…" style="resize:vertical"></textarea>
+    </div>
+    <button class="btn-save" onclick="saveNote()">Lưu ghi chú</button>
+  `);
+  setTimeout(()=>document.getElementById('newNoteText')?.focus(), 200);
+}
+function saveNote() {
+  const text = document.getElementById('newNoteText')?.value?.trim();
+  if (!text) { toast('⚠️ Nhập nội dung'); return; }
+  data.notes.push(text);
+  saveData(); closeModal(); renderNotes();
+  toast('✅ Đã lưu ghi chú!');
+}
+
+/* EDIT ROADMAP ITEM */
+function openEditRoadmap(id) {
+  const r = data.roadmap.find(x=>x.id===id);
+  if (!r) return;
+  openModal(`Cập nhật: ${r.title}`, `
+    <div class="f-group">
+      <label class="f-label">Trạng thái</label>
+      <select class="f-input f-select" id="editStatus">
+        <option value="todo" ${r.status==='todo'?'selected':''}>Sắp tới</option>
+        <option value="prog" ${r.status==='prog'?'selected':''}>Đang làm</option>
+        <option value="done" ${r.status==='done'?'selected':''}>Hoàn thành</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Tiến độ: <span id="progValLabel">${r.progress}%</span></label>
+      <input type="range" id="editProg" min="0" max="100" value="${r.progress}" style="width:100%;accent-color:#6366f1;cursor:pointer"
+        oninput="document.getElementById('progValLabel').textContent=this.value+'%'"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Ghi chú nhanh</label>
+      <input type="text" class="f-input" id="editDesc" value="${r.desc}" placeholder="Cập nhật mô tả…"/>
+    </div>
+    <button class="btn-save" onclick="saveRoadmapEdit(${id})">Lưu thay đổi</button>
+  `);
+}
+function saveRoadmapEdit(id) {
+  const r = data.roadmap.find(x=>x.id===id);
+  if (!r) return;
+  r.status   = document.getElementById('editStatus').value;
+  r.progress = parseInt(document.getElementById('editProg').value);
+  r.desc     = document.getElementById('editDesc').value.trim() || r.desc;
+  if (r.status === 'done') r.progress = 100;
+  if (r.status === 'todo') r.progress = 0;
+  saveData(); closeModal(); renderAll();
+  toast('✅ Đã cập nhật giai đoạn!');
+}
+
+/* EDIT PROFILE */
+function openEditProfile() {
+  openModal('Thông tin cá nhân', `
+    <div class="f-group">
+      <label class="f-label">Họ và tên</label>
+      <input type="text" class="f-input" id="epName" value="${data.profile.name}"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Vai trò / Năm học</label>
+      <input type="text" class="f-input" id="epRole" value="${data.profile.role}"/>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Mục tiêu lớn / Ước mơ</label>
+      <input type="text" class="f-input" id="epDream" value="${data.profile.dream}"/>
+    </div>
+    <button class="btn-save" onclick="saveProfile()">Lưu hồ sơ</button>
+  `);
+}
+function saveProfile() {
+  data.profile.name  = document.getElementById('epName').value.trim() || data.profile.name;
+  data.profile.role  = document.getElementById('epRole').value.trim() || data.profile.role;
+  data.profile.dream = document.getElementById('epDream').value.trim() || data.profile.dream;
+  saveData(); closeModal(); renderStats();
+  toast('✅ Đã cập nhật hồ sơ!');
+}
+
+/* ═══════════════════════════════════════
+   AI CHAT
+═══════════════════════════════════════ */
+const AI_RESPONSES = {
+  'lộ trình': [
+    'Dựa trên hồ sơ của bạn, lộ trình 3 năm hiện tại khá cân bằng giữa kỹ thuật và kỹ năng mềm. Tôi gợi ý bạn ưu tiên **JavaScript + Python** trong năm đầu, sau đó chuyển sang **xây dựng portfolio thực tế** ở năm 2. Năm 3 là lúc "đánh bóng" thương hiệu cá nhân. 🚀',
+    'Lộ trình của bạn có cấu trúc tốt! Điểm mấu chốt là **tính nhất quán**. Đặt mục tiêu nhỏ hàng tuần thay vì chỉ nhìn vào đích xa. Bạn đã hoàn thành được những giai đoạn nền tảng — đó là nền tảng tuyệt vời!'
+  ],
+  'động lực': [
+    'Để duy trì động lực, hãy thử phương pháp **"Kết quả tối thiểu khả thi"**: cam kết học tối thiểu 20 phút mỗi ngày, dù bận đến đâu. Não bộ sẽ dần hình thành thói quen sau 66 ngày. 💪',
+    'Một mẹo hay: **ghi lại tiến độ hàng tuần** ngay trên dashboard này. Nhìn thấy bản thân tiến lên sẽ tạo ra vòng lặp tích cực. Đừng so sánh với người khác — chỉ so với bản thân hôm qua!'
+  ],
+  'kỹ năng': [
+    'Với định hướng công nghệ, 3 kỹ năng quan trọng nhất hiện nay là:\n1. **Lập trình** (JavaScript/Python)\n2. **Tiếng Anh kỹ thuật** (để đọc tài liệu, làm việc với team quốc tế)\n3. **Tư duy giải quyết vấn đề** (học qua competitive programming hoặc case study)\n\nBạn đang phát triển đủ 3 kỹ năng này — rất tốt! ⚡',
+  ],
+  'học tập': [
+    'Phương pháp học hiệu quả nhất là **Active Recall + Spaced Repetition**. Thay vì đọc đi đọc lại, hãy tự kiểm tra bản thân. Ứng dụng Anki rất hữu ích cho việc này. 📚',
+  ],
+  'default': [
+    'Đây là câu hỏi thú vị! Dựa trên lộ trình 3 năm của bạn, điều quan trọng nhất là **tính nhất quán**. Mỗi hành động nhỏ hàng ngày sẽ tích lũy thành kết quả lớn. Bạn muốn tôi đi sâu vào khía cạnh nào? 🎯',
+    'Tôi hiểu bạn đang quan tâm đến điều này. Hãy chia nhỏ vấn đề thành các bước nhỏ có thể thực hiện được. Bước đầu tiên luôn là quan trọng nhất — hành động ngay hôm nay! ✨',
+    'Câu hỏi hay! Trên lộ trình 3 năm, giai đoạn này của bạn là **thời điểm xây dựng nền tảng**. Đừng vội vàng, hãy làm vững từng bước. Thành công bền vững đến từ sự kiên nhẫn. 🏗',
+  ]
+};
+
+let aiOpen = false;
+let isTyping = false;
+
+function openAI() {
+  aiOpen = true;
+  document.getElementById('aiPanel').classList.add('open');
+  document.getElementById('aiFab').classList.add('hidden');
+  if (document.getElementById('aiMessages').children.length === 0) {
+    addAIMsg(`Xin chào **${data.profile.name}**! 👋 Tôi là AI Coach của bạn.\n\nTôi đã phân tích lộ trình 3 năm của bạn. Hiện tại bạn đang hoàn thành **${getStats().avg}%** tổng tiến độ — rất tốt!\n\nBạn muốn tôi tư vấn về điều gì hôm nay?`, 'ai');
+  }
+  setTimeout(()=>document.getElementById('aiInput')?.focus(), 300);
+}
+function closeAI() {
+  aiOpen = false;
+  document.getElementById('aiPanel').classList.remove('open');
+  document.getElementById('aiFab').classList.remove('hidden');
+}
+
+function addAIMsg(text, role) {
+  const msgs = document.getElementById('aiMessages');
+  const avatar = role === 'ai' ? '✦' : data.profile.name.charAt(0).toUpperCase();
+  const time = new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+
+  // Parse **bold** markdown
+  const html = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `
+    <div class="msg-av">${avatar}</div>
+    <div>
+      <div class="msg-bubble">${html}</div>
+      <div class="msg-time">${time}</div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = 'typingIndicator';
+  div.innerHTML = `
+    <div class="msg-av">✦</div>
+    <div class="msg-bubble" style="padding:12px 16px">
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() {
+  document.getElementById('typingIndicator')?.remove();
+}
+
+function getAIReply(q) {
+  const lq = q.toLowerCase();
+  for (const [key, resps] of Object.entries(AI_RESPONSES)) {
+    if (key !== 'default' && lq.includes(key)) {
+      return resps[Math.floor(Math.random()*resps.length)];
+    }
+  }
+  const defs = AI_RESPONSES['default'];
+  return defs[Math.floor(Math.random()*defs.length)];
+}
+
+async function sendAI() {
+  if (isTyping) return;
+  const input = document.getElementById('aiInput');
+  const q = input.value.trim();
+  if (!q) return;
+
+  addAIMsg(q, 'user');
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Hide suggestions after first use
+  document.getElementById('aiSuggestions').style.display = 'none';
+
+  isTyping = true;
+  showTyping();
+  await new Promise(r => setTimeout(r, 900 + Math.random()*700));
+  removeTyping();
+
+  const reply = getAIReply(q);
+  addAIMsg(reply, 'ai');
+  isTyping = false;
+}
+
+function sendSuggestion(text) {
+  document.getElementById('aiInput').value = text;
+  sendAI();
+}
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════ */
+function setPage(page, btn) {
+  document.querySelectorAll('.sb-nav-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function scrollToRoadmap() {
+  document.getElementById('roadmapSection')?.scrollIntoView({ behavior:'smooth' });
+}
+
+/* ═══════════════════════════════════════
+   SIDEBAR TOGGLE
+═══════════════════════════════════════ */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeAI(); }
+  if (e.key === 'k' && (e.metaKey||e.ctrlKey)) { e.preventDefault(); openAI(); }
+});
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+loadData();
+renderAll();
+</script>
+</body>
+</html>
